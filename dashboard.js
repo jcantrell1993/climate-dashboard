@@ -262,34 +262,39 @@ new Chart(document.getElementById('chartCO2Modern').getContext('2d'), {
       borderWidth:2,fill:true,tension:0.3,pointRadius:0,pointHoverRadius:5
     },{
       label:'SSP1-2.6 (aggressive cuts)',
-      data:toXY(co2Projections.ssp126),
+      data:toXY(interpYearly(co2Projections.ssp126)),
       borderColor:'#22c55e',borderWidth:1.5,borderDash:[4,4],
-      pointRadius:0,fill:false,tension:0.4
+      pointRadius:0,fill:false,tension:0.2
     },{
       label:'SSP2-4.5 (moderate action)',
-      data:toXY(co2Projections.ssp245),
+      data:toXY(interpYearly(co2Projections.ssp245)),
       borderColor:'#f59e0b',borderWidth:1.5,borderDash:[4,4],
-      pointRadius:0,fill:false,tension:0.4
+      pointRadius:0,fill:false,tension:0.2
     },{
       label:'SSP5-8.5 (business as usual)',
-      data:toXY(co2Projections.ssp585),
+      data:toXY(interpYearly(co2Projections.ssp585)),
       borderColor:'#ef4444',borderWidth:1.5,borderDash:[4,4],
-      pointRadius:0,fill:false,tension:0.4
+      pointRadius:0,fill:false,tension:0.2
     }
   ]},
   options:{
     responsive:true,maintainAspectRatio:false,animation:{duration:600},
-    interaction:{mode:'index',intersect:false},
+    interaction:{mode:'x',intersect:false},
     scales:{
       x:{...baseScaleOpts,type:'linear',min:1959,max:2100,
-        ticks:{color:'#94a3b8',maxTicksLimit:8,callback:v=>`${v}`}},
+        ticks:{color:'#94a3b8',stepSize:20,callback:v=>`${v}`}},
       y:{...baseScaleOpts,min:310,max:1050,
         title:{display:true,text:'CO₂ (ppm)',color:'#64748b',font:{size:11}},
         ticks:{color:'#94a3b8',callback:v=>`${v}`}}
     },
     plugins:{
       legend:{display:true,position:'top',labels:{boxWidth:12,padding:12,usePointStyle:true,color:'#94a3b8',font:{size:11}}},
-      tooltip:{...baseTooltipOpts,callbacks:{label:item=>`${item.dataset.label}: ${item.parsed.y.toFixed(1)} ppm`}}
+      tooltip:{...baseTooltipOpts,callbacks:{label:item=>{
+          const x=item.parsed.x,isObs=item.dataset.label.includes('observed');
+          if(isObs && x>2025) return null;
+          if(!isObs && x<=2024) return null;
+          return `${item.dataset.label}: ${item.parsed.y.toFixed(1)} ppm`;
+        }}}
     }
   }
 });
