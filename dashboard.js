@@ -1504,16 +1504,3 @@ window.addEventListener('resize',()=>{
   });
 })();
 
-// ─── ENTRANCE ANIMATIONS ──────────────────────────────────────────────────────
-(function(){
-  document.documentElement.classList.add('js-ready');
-  const obs = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); }
-    });
-  }, {threshold: 0.07});
-  document.querySelectorAll('.stat-card,.chart-card,.tip-card,.impact-card,.ghg-card,.tc,.co2-th,.section-hd').forEach(el => {
-    el.classList.add('sf');
-    obs.observe(el);
-  });
-})();

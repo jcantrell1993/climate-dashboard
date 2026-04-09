@@ -204,13 +204,8 @@ hr.div{border:none;border-top:1px solid var(--border);margin:60px 0 0}
 @keyframes pulse{0%,100%{opacity:1;r:5}50%{opacity:0.5;r:8}}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 .fade-in{animation:fadeIn 0.3s ease forwards}
-.sf{opacity:0;transform:translateY(16px);transition:opacity 0.55s ease,transform 0.55s ease}
-.js-ready .sf{opacity:0}
-.sf.visible,.js-ready .sf.visible{opacity:1;transform:translateY(0)}
-.sf:not(.js-ready *){opacity:1;transform:none}
 nav a:focus-visible,.fbtn:focus-visible{outline:2px solid var(--red);outline-offset:2px}
 @media(prefers-reduced-motion:reduce){
-  .sf{transition:none !important;opacity:1 !important;transform:none !important}
   .breaking-dot{animation:none !important}
   .stat-card,.chart-card{transition:none !important}
 }
