@@ -2679,10 +2679,10 @@ new Chart(document.getElementById('chartProjections').getContext('2d'), {
   ]},
   options:{
     responsive:true,maintainAspectRatio:false,animation:{duration:800},
-    interaction:{mode:'index',intersect:false},
+    interaction:{mode:'x',intersect:false},
     scales:{
       x:{...baseScaleOpts,type:'linear',min:1850,max:2100,
-        ticks:{color:'#94a3b8',maxTicksLimit:10,callback:v=>`${v}`}},
+        ticks:{color:'#94a3b8',stepSize:25,callback:v=>`${v}`}},
       y:{...baseScaleOpts,min:-0.1,max:4.8,
         title:{display:true,text:'Warming above pre-industrial (°C)',color:'#64748b',font:{size:11}},
         ticks:{color:'#94a3b8',callback:v=>`+${v.toFixed(1)}°C`}}
