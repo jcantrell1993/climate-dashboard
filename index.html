@@ -23,16 +23,19 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-s
 /* HEADER */
 header{position:sticky;top:0;z-index:100;background:rgba(5,8,14,0.96);backdrop-filter:blur(16px);
   border-bottom:1px solid var(--border);padding:0 40px;
-  display:flex;align-items:center;justify-content:space-between;height:58px}
+  display:flex;align-items:center;justify-content:space-between;height:58px;overflow:hidden}
+header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(to right,transparent,rgba(239,68,68,0.35),transparent);pointer-events:none}
 .logo{font-size:17px;font-weight:700;letter-spacing:-0.5px;color:var(--red)}
 .logo span{color:var(--text);font-weight:400}
 .logo-sub{font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;
   color:var(--muted);margin-left:12px}
-nav{display:flex;gap:1px;flex-wrap:wrap}
+nav{display:flex;gap:1px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none}
+nav::-webkit-scrollbar{display:none}
 nav a{color:var(--text2);text-decoration:none;font-size:12px;font-weight:500;
-  padding:5px 10px;border-radius:6px;transition:all 0.18s;white-space:nowrap}
-nav a:hover{color:var(--text);background:rgba(255,255,255,0.05)}
-nav a.nav-active{color:var(--red);background:rgba(239,68,68,0.08)}
+  padding:5px 10px;border-radius:6px;transition:all 0.18s;white-space:nowrap;flex-shrink:0}
+nav a:hover{color:var(--text);background:rgba(255,255,255,0.06)}
+nav a.nav-active{color:var(--red);background:rgba(239,68,68,0.1);box-shadow:inset 0 -2px 0 var(--red)}
 
 /* HUMAN HEALTH SECTION STYLES */
 .co2-threshold-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-top:24px}
@@ -74,9 +77,9 @@ nav a.nav-active{color:var(--red);background:rgba(239,68,68,0.08)}
 
 .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));
   gap:14px;max-width:1080px;margin:0 auto}
-.stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;
-  padding:22px 18px;text-align:center;transition:border-color 0.2s}
-.stat-card:hover{border-color:rgba(239,68,68,0.4)}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:22px 18px;text-align:center;transition:border-color 0.2s,box-shadow 0.2s,transform 0.2s}
+.stat-card:hover{border-color:rgba(239,68,68,0.4);box-shadow:0 4px 24px rgba(239,68,68,0.08);transform:translateY(-2px)}
 .stat-val{font-size:30px;font-weight:700;font-family:'JetBrains Mono',monospace;line-height:1}
 .stat-lbl{font-size:11px;color:var(--text2);margin-top:6px;text-transform:uppercase;letter-spacing:0.8px}
 .stat-sub{font-size:11px;color:var(--muted);margin-top:3px}
@@ -99,7 +102,8 @@ nav a.nav-active{color:var(--red);background:rgba(239,68,68,0.08)}
 .row-1{display:grid;grid-template-columns:1fr;gap:24px}
 .row-2{display:grid;grid-template-columns:1fr 1fr;gap:24px}
 .row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px}
-.chart-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px}
+.chart-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;transition:border-color 0.2s,box-shadow 0.2s}
+.chart-card:hover{border-color:rgba(255,255,255,0.1);box-shadow:0 4px 32px rgba(0,0,0,0.4)}
 .chart-t{font-size:15px;font-weight:600;margin-bottom:4px}
 .chart-st{font-size:12px;color:var(--text2);margin-bottom:18px}
 .chart-src{font-size:11px;color:var(--muted);margin-top:10px}
@@ -193,12 +197,14 @@ hr.div{border:none;border-top:1px solid var(--border);margin:60px 0 0}
 
 /* RESPONSIVE */
 @media(max-width:1000px){.row-2,.row-3{grid-template-columns:1fr}.map-layout{grid-template-columns:1fr}.ghg-grid{grid-template-columns:1fr}}
-@media(max-width:700px){.hero h1{font-size:36px}.stat-grid{grid-template-columns:1fr 1fr}nav{display:none}.map-wrap{padding:40px 16px}.section{padding:60px 20px}}
+@media(max-width:700px){.hero h1{font-size:36px}.stat-grid{grid-template-columns:1fr 1fr}.map-wrap{padding:40px 16px}.section{padding:60px 20px}}
 
 /* ANIMATIONS */
 @keyframes pulse{0%,100%{opacity:1;r:5}50%{opacity:0.5;r:8}}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 .fade-in{animation:fadeIn 0.3s ease forwards}
+.sf{opacity:0;transform:translateY(16px);transition:opacity 0.55s ease,transform 0.55s ease}
+.sf.visible{opacity:1;transform:translateY(0)}
 </style>
 </head>
 <body>
@@ -210,23 +216,23 @@ hr.div{border:none;border-top:1px solid var(--border);margin:60px 0 0}
     <span class="logo-sub">Updated April 2026</span>
   </div>
   <nav>
-    <a href="#synopsis">📋 Synopsis</a>
-    <a href="#atmosphere">🌫 Atmosphere</a>
-    <a href="#temperature">🌡 Temperature</a>
-    <a href="#ocean">🌊 Oceans &amp; Ice</a>
-    <a href="#sealevel">🌍 Sea Level</a>
-    <a href="#map">🗺 Events</a>
-    <a href="#projections">📈 Projections</a>
-    <a href="#ndcgap">📊 NDC Gap</a>
-    <a href="#tipping">⚠ Tipping Points</a>
-    <a href="#compoundcrises">🔗 Cascades</a>
-    <a href="#humanhealth">🧠 Health</a>
-    <a href="#collapse">💀 Collapse</a>
-    <a href="#carbonbudget">⏳ Budget</a>
-    <a href="#displacement">🏃 Displacement</a>
-    <a href="#economicloss">💸 Losses</a>
-    <a href="#feedbackloops">🔄 Feedbacks</a>
-    <a href="#sources">📚 Sources</a>
+    <a href="#synopsis">Synopsis</a>
+    <a href="#atmosphere">Atmosphere</a>
+    <a href="#temperature">Temperature</a>
+    <a href="#ocean">Oceans &amp; Ice</a>
+    <a href="#sealevel">Sea Level</a>
+    <a href="#map">Events</a>
+    <a href="#projections">Projections</a>
+    <a href="#ndcgap">NDC Gap</a>
+    <a href="#tipping">Tipping Points</a>
+    <a href="#compoundcrises">Cascades</a>
+    <a href="#humanhealth">Health</a>
+    <a href="#collapse">Collapse</a>
+    <a href="#carbonbudget">Budget</a>
+    <a href="#displacement">Displacement</a>
+    <a href="#economicloss">Losses</a>
+    <a href="#feedbackloops">Feedbacks</a>
+    <a href="#sources">Sources</a>
   </nav>
 </header>
 
@@ -3664,6 +3670,19 @@ window.addEventListener('resize',()=>{
       });
       ticking = false;
     });
+  });
+})();
+
+// ─── ENTRANCE ANIMATIONS ──────────────────────────────────────────────────────
+(function(){
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); }
+    });
+  }, {threshold: 0.07});
+  document.querySelectorAll('.stat-card,.chart-card,.tip-card,.impact-card,.ghg-card,.tc,.co2-th,.section-hd').forEach(el => {
+    el.classList.add('sf');
+    obs.observe(el);
   });
 })();
 </script>
