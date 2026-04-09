@@ -2331,6 +2331,15 @@ const ssp585 = [[2024,1.47],[2030,1.72],[2040,2.14],[2050,2.55],[2060,3.06],[207
 
 // ─── CHART HELPERS ───────────────────────────────────────────────────────────
 function toXY(arr){ return arr.map(d=>({x:d[0],y:d[1]})); }
+function interpYearly(pts){
+  const out=[];
+  for(let i=0;i<pts.length-1;i++){
+    const [x1,y1]=pts[i],[x2,y2]=pts[i+1];
+    for(let x=x1;x<x2;x++) out.push([x, y1+(y2-y1)*(x-x1)/(x2-x1)]);
+  }
+  out.push(pts[pts.length-1]);
+  return out;
+}
 
 const baseScaleOpts = {
   grid:{color:GRID},
@@ -2642,28 +2651,28 @@ new Chart(document.getElementById('chartProjections').getContext('2d'), {
   data:{datasets:[
     {
       label:'Historical record',
-      data:toXY(historicalPI),
-      borderColor:'#e2e8f0',borderWidth:2.5,fill:false,tension:0.4,
+      data:toXY(interpYearly(historicalPI)),
+      borderColor:'#e2e8f0',borderWidth:2.5,fill:false,tension:0.2,
       pointRadius:0,pointHoverRadius:5
     },{
       label:'SSP1-2.6: Aggressive cuts → ~1.8°C',
-      data:toXY(ssp126),
-      borderColor:'#22c55e',borderWidth:2,borderDash:[4,3],fill:false,tension:0.4,
+      data:toXY(interpYearly(ssp126)),
+      borderColor:'#22c55e',borderWidth:2,borderDash:[4,3],fill:false,tension:0.2,
       pointRadius:0,pointHoverRadius:5
     },{
       label:'SSP2-4.5: Moderate action → ~2.7°C',
-      data:toXY(ssp245),
-      borderColor:'#f59e0b',borderWidth:2,borderDash:[4,3],fill:false,tension:0.4,
+      data:toXY(interpYearly(ssp245)),
+      borderColor:'#f59e0b',borderWidth:2,borderDash:[4,3],fill:false,tension:0.2,
       pointRadius:0,pointHoverRadius:5
     },{
       label:'SSP3-7.0: Current policies → ~3.6°C',
-      data:toXY(ssp370),
-      borderColor:'#f97316',borderWidth:2,borderDash:[4,3],fill:false,tension:0.4,
+      data:toXY(interpYearly(ssp370)),
+      borderColor:'#f97316',borderWidth:2,borderDash:[4,3],fill:false,tension:0.2,
       pointRadius:0,pointHoverRadius:5
     },{
       label:'SSP5-8.5: Business as usual → ~4.4°C',
-      data:toXY(ssp585),
-      borderColor:'#ef4444',borderWidth:2.5,borderDash:[4,3],fill:false,tension:0.4,
+      data:toXY(interpYearly(ssp585)),
+      borderColor:'#ef4444',borderWidth:2.5,borderDash:[4,3],fill:false,tension:0.2,
       pointRadius:0,pointHoverRadius:5
     },{
       type:'line',label:'1.5°C Paris target',
