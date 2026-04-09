@@ -747,11 +747,16 @@ function getVulnColor(id){
   return ['#0c1a30','#1e3a5f','#243b3b','#3d2e0a','#6b2011','#5c0a0a'][level] || '#1a2535';
 }
 
+let cachedWorldData = null;
+
 function initMap(){
   const container = document.getElementById('world-map');
   const W = container.clientWidth || 800;
   const H = Math.round(W * 0.52);
   const svg = d3.select('#map-svg').attr('viewBox',`0 0 ${W} ${H}`);
+
+  // Clear previous content on resize
+  svg.selectAll('*').remove();
 
   const proj = d3.geoNaturalEarth1().scale(W/6.28).translate([W/2,H/2]);
   const path = d3.geoPath().projection(proj);
@@ -759,36 +764,45 @@ function initMap(){
   // Ocean background
   svg.append('rect').attr('width',W).attr('height',H).attr('fill','#040d18');
 
-  d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
-    .then(world=>{
-      const countries = topojson.feature(world, world.objects.countries);
+  function renderMap(world){
+    const countries = topojson.feature(world, world.objects.countries);
 
-      // Countries
-      svg.selectAll('path.country')
-        .data(countries.features)
-        .enter().append('path')
-        .attr('class','country')
-        .attr('d',path)
-        .attr('fill',d=>getVulnColor(d.id))
-        .attr('stroke','#0d1a2e')
-        .attr('stroke-width',0.5);
+    // Countries
+    svg.selectAll('path.country')
+      .data(countries.features)
+      .enter().append('path')
+      .attr('class','country')
+      .attr('d',path)
+      .attr('fill',d=>getVulnColor(d.id))
+      .attr('stroke','#0d1a2e')
+      .attr('stroke-width',0.5);
 
-      // Graticule
-      svg.append('path')
-        .datum(d3.geoGraticule()())
-        .attr('class','graticule')
-        .attr('d',path)
-        .attr('fill','none')
-        .attr('stroke','rgba(255,255,255,0.03)')
-        .attr('stroke-width',0.5);
+    // Graticule
+    svg.append('path')
+      .datum(d3.geoGraticule()())
+      .attr('class','graticule')
+      .attr('d',path)
+      .attr('fill','none')
+      .attr('stroke','rgba(255,255,255,0.03)')
+      .attr('stroke-width',0.5);
 
-      drawMarkers(svg, proj);
-    })
-    .catch(()=>{
-      svg.append('text').attr('x',W/2).attr('y',H/2)
-        .attr('text-anchor','middle').attr('fill','#64748b').attr('font-size',14)
-        .text('Map requires an internet connection to load');
-    });
+    drawMarkers(svg, proj);
+  }
+
+  if(cachedWorldData){
+    renderMap(cachedWorldData);
+  } else {
+    d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
+      .then(world=>{
+        cachedWorldData = world;
+        renderMap(world);
+      })
+      .catch(()=>{
+        svg.append('text').attr('x',W/2).attr('y',H/2)
+          .attr('text-anchor','middle').attr('fill','#64748b').attr('font-size',14)
+          .text('Map requires an internet connection to load');
+      });
+  }
 }
 
 function drawMarkers(svg, proj){
@@ -825,7 +839,9 @@ function drawMarkers(svg, proj){
   filtered.forEach(e=>{
     const [x,y] = proj([e.lon,e.lat]);
     if(!x||!y) return;
-    const g = svg.append('g').attr('class','ev-marker').style('cursor','pointer');
+    const g = svg.append('g').attr('class','ev-marker').style('cursor','pointer')
+      .attr('tabindex','0').attr('role','button')
+      .attr('aria-label',`${e.name} — ${e.sev} severity ${typeLabels[e.type]} (${e.year})`);
     g.append('circle')
       .attr('cx',x).attr('cy',y)
       .attr('r',sizePx[e.sev]||5)
@@ -838,7 +854,12 @@ function drawMarkers(svg, proj){
       d3.select(this).select('circle').attr('fill-opacity',1).attr('r',(sizePx[e.sev]||5)+3);
     }).on('mouseout',function(){
       d3.select(this).select('circle').attr('fill-opacity',0.8).attr('r',sizePx[e.sev]||5);
-    }).on('click',()=>showEventPanel(e));
+    }).on('focus',function(){
+      d3.select(this).select('circle').attr('fill-opacity',1).attr('r',(sizePx[e.sev]||5)+3).attr('stroke-width',2);
+    }).on('blur',function(){
+      d3.select(this).select('circle').attr('fill-opacity',0.8).attr('r',sizePx[e.sev]||5).attr('stroke-width',0.5);
+    }).on('click',()=>showEventPanel(e))
+      .on('keydown',function(event){ if(event.key==='Enter'||event.key===' '){ event.preventDefault(); showEventPanel(e); }});
   });
 }
 
