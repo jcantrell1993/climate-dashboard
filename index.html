@@ -2701,7 +2701,13 @@ new Chart(document.getElementById('chartProjections').getContext('2d'), {
         filter:item=>!item.text.includes('target')
       }},
       tooltip:{...baseTooltipOpts,callbacks:{
-        label:item=>item.dataset.label.includes('target')?null:`${item.dataset.label.split(':')[0]}: +${item.parsed.y.toFixed(2)}°C`
+        label:item=>{
+          const x=item.parsed.x,isHist=item.dataset.label==='Historical record',isTgt=item.dataset.label.includes('target');
+          if(isTgt) return null;
+          if(isHist && x>2024) return null;
+          if(!isHist && !isTgt && x<=2024) return null;
+          return `${item.dataset.label.split(':')[0]}: +${item.parsed.y.toFixed(2)}°C`;
+        }
       }}
     }
   }
