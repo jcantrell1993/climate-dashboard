@@ -13,7 +13,7 @@
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
   --bg:#05080e;--bg2:#080c14;--card:#0d1420;--card2:#111b2e;--border:#1a2540;
-  --text:#cbd5e1;--text2:#94a3b8;--muted:#475569;
+  --text:#cbd5e1;--text2:#94a3b8;--muted:#64748b;
   --red:#ef4444;--red-dark:#991b1b;--orange:#f97316;--amber:#f59e0b;
   --yellow:#eab308;--blue:#3b82f6;--cyan:#06b6d4;--green:#22c55e;--purple:#a855f7;
 }
@@ -23,7 +23,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-s
 /* HEADER */
 header{position:sticky;top:0;z-index:100;background:rgba(5,8,14,0.96);backdrop-filter:blur(16px);
   border-bottom:1px solid var(--border);padding:10px 40px;
-  display:flex;flex-direction:column;align-items:flex-start;gap:8px;position:relative}
+  display:flex;flex-direction:column;align-items:flex-start;gap:8px}
 header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
   background:linear-gradient(to right,transparent,rgba(239,68,68,0.35),transparent);pointer-events:none}
 .header-top{display:flex;align-items:baseline;gap:0;width:100%}
@@ -128,7 +128,7 @@ canvas{display:block}
   background:var(--card);color:var(--text2);font-size:13px;font-weight:500;
   cursor:pointer;transition:all 0.18s;font-family:inherit}
 .fbtn:hover{border-color:var(--text2);color:var(--text)}
-.fbtn.active-heat{background:rgba(239,68,68,0.15);border-color:var(--red);color:#fca5a5}
+.fbtn.active-heatwave{background:rgba(239,68,68,0.15);border-color:var(--red);color:#fca5a5}
 .fbtn.active-drought{background:rgba(245,158,11,0.15);border-color:var(--amber);color:#fcd34d}
 .fbtn.active-flood{background:rgba(59,130,246,0.15);border-color:var(--blue);color:#93c5fd}
 .fbtn.active-storm{background:rgba(168,85,247,0.15);border-color:var(--purple);color:#d8b4fe}
@@ -151,6 +151,7 @@ canvas{display:block}
 .sev-extreme{background:rgba(220,38,38,0.18);color:#fca5a5;border:1px solid rgba(220,38,38,0.4)}
 .sev-severe{background:rgba(234,88,12,0.18);color:#fdba74;border:1px solid rgba(234,88,12,0.4)}
 .sev-moderate{background:rgba(217,119,6,0.18);color:#fcd34d;border:1px solid rgba(217,119,6,0.4)}
+.sev-high{background:rgba(249,115,22,0.18);color:#fdba74;border:1px solid rgba(249,115,22,0.4)}
 .ev-desc{font-size:13px;color:var(--text2);line-height:1.75}
 .vuln-legend{margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
 .vuln-title{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
@@ -205,6 +206,17 @@ hr.div{border:none;border-top:1px solid var(--border);margin:60px 0 0}
 .fade-in{animation:fadeIn 0.3s ease forwards}
 .sf{opacity:0;transform:translateY(16px);transition:opacity 0.55s ease,transform 0.55s ease}
 .sf.visible{opacity:1;transform:translateY(0)}
+.js-ready .sf{opacity:0}.sf:not(.js-ready *){opacity:1;transform:none}
+nav a:focus-visible,.fbtn:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){
+  .sf{transition:none !important;opacity:1 !important;transform:none !important}
+  .breaking-dot{animation:none !important}
+  .stat-card,.chart-card{transition:none !important}
+}
+@media(max-width:700px){
+  header{padding:10px 16px}
+  [style*="grid-template-columns"]{grid-template-columns:1fr !important}
+}
 </style>
 </head>
 <body>
@@ -671,7 +683,7 @@ hr.div{border:none;border-top:1px solid var(--border);margin:60px 0 0}
   <div class="chart-card" style="margin-bottom:24px">
     <div class="chart-t">800,000-Year Atmospheric CO₂ Record</div>
     <div class="chart-st">Ice core data (EPICA Dome C, Vostok) + Mauna Loa direct measurements. Natural glacial-interglacial cycles ranged 180–300 ppm over 800,000 years. The modern spike at the far right (1750–2024) occupies less than 0.03% of the x-axis but shoots 40% above any previous natural maximum — labeled in red. X-axis shows geological time; see the Mauna Loa chart for modern-era detail.</div>
-    <div class="chart-wrapper" style="height:300px"><canvas id="chartIceCore"></canvas></div>
+    <div class="chart-wrapper" style="height:300px"><canvas id="chartIceCore" role="img" aria-label="800,000-year ice core CO2 record showing current levels far exceeding historical range"></canvas></div>
     <div class="chart-src">Sources: CDIAC / Lüthi et al. 2008 (Nature), NOAA Mauna Loa Observatory. Pre-industrial range: 180–300 ppm. Current (2026 forecast): ~429 ppm — the highest in 3 million years.</div>
   </div>
 
@@ -680,7 +692,7 @@ hr.div{border:none;border-top:1px solid var(--border);margin:60px 0 0}
     <div class="chart-card">
       <div class="chart-t">Mauna Loa CO₂ Record (1959–2025)</div>
       <div class="chart-st">Continuous direct measurement. The 2025 seasonal peak exceeded 430 ppm for the first time. Annual growth is accelerating.</div>
-      <div class="chart-wrapper" style="height:260px"><canvas id="chartCO2Modern"></canvas></div>
+      <div class="chart-wrapper" style="height:260px"><canvas id="chartCO2Modern" role="img" aria-label="Mauna Loa CO2 measurements 1959-2025 with SSP scenario projections to 2100"></canvas></div>
       <div class="chart-src">Source: NOAA Global Monitoring Laboratory / Scripps Institution of Oceanography. 2024 annual avg: 424.6 ppm. Largest 1-year jump on record.</div>
     </div>
     <div>
@@ -736,7 +748,7 @@ hr.div{border:none;border-top:1px solid var(--border);margin:60px 0 0}
   <div class="chart-card">
     <div class="chart-t">Global Temperature Anomaly 1880–2024</div>
     <div class="chart-st">Annual mean surface temperature anomaly (°C) relative to 1951–1980 baseline. 2024: +1.28°C vs NASA baseline / +1.55°C vs pre-industrial (Copernicus/WMO). Red = above average, blue = below average.</div>
-    <div class="chart-wrapper" style="height:320px"><canvas id="chartTemp"></canvas></div>
+    <div class="chart-wrapper" style="height:320px"><canvas id="chartTemp" role="img" aria-label="Global temperature anomaly bar chart 1880-2024 showing accelerating warming"></canvas></div>
     <div class="chart-src">Source: NASA GISS Surface Temperature Analysis (GISTEMP v4). 15 consecutive monthly records: June 2023 – August 2024. Copernicus/WMO confirmed 2024 at +1.55°C vs pre-industrial — first calendar year above 1.5°C threshold. 2023–2025 is the first 3-year period averaging above 1.5°C.</div>
   </div>
   <div style="margin-top:18px;background:rgba(249,115,22,0.06);border:1px solid rgba(249,115,22,0.25);border-radius:10px;padding:16px 20px;font-size:13px;color:var(--text2);line-height:1.7">
@@ -760,19 +772,19 @@ hr.div{border:none;border-top:1px solid var(--border);margin:60px 0 0}
     <div class="chart-card">
       <div class="chart-t">Ocean Heat Content Anomaly</div>
       <div class="chart-st">Upper 2,000m heat content anomaly (ZJ) vs 1981–2010 baseline</div>
-      <div class="chart-wrapper" style="height:220px"><canvas id="chartOHC"></canvas></div>
+      <div class="chart-wrapper" style="height:220px"><canvas id="chartOHC" role="img" aria-label="Ocean heat content anomaly 1958-2024 reaching 351 zettajoules"></canvas></div>
       <div class="chart-src">Source: NOAA NCEI / Cheng et al. 2025. 2024: record high, +16 ZJ above 2023.</div>
     </div>
     <div class="chart-card">
       <div class="chart-t">Global Mean Sea Level Rise</div>
       <div class="chart-st">mm above 1993 baseline (satellite altimetry)</div>
-      <div class="chart-wrapper" style="height:220px"><canvas id="chartSeaLevel"></canvas></div>
+      <div class="chart-wrapper" style="height:220px"><canvas id="chartSeaLevel" role="img" aria-label="Global mean sea level rise 1993-2024 showing 111mm increase"></canvas></div>
       <div class="chart-src">Source: NASA / CNES Topex-Jason-Sentinel-6 satellite series. +111mm total since 1993. Rate: 2.1mm/yr (1993) → 4.7mm/yr (2024).</div>
     </div>
     <div class="chart-card">
       <div class="chart-t">Ocean Acidification (Surface pH)</div>
       <div class="chart-st">Average ocean surface pH since pre-industrial era (1750)</div>
-      <div class="chart-wrapper" style="height:220px"><canvas id="chartPH"></canvas></div>
+      <div class="chart-wrapper" style="height:220px"><canvas id="chartPH" role="img" aria-label="Ocean surface pH decline from 8.2 pre-industrial to 8.04 in 2024"></canvas></div>
       <div class="chart-src">Source: NOAA / Smithsonian Ocean. pH dropped 0.16 units (30% more acidic). Fastest change in 50 million years.</div>
     </div>
   </div>
@@ -981,7 +993,7 @@ hr.div{border:none;border-top:1px solid var(--border);margin:60px 0 0}
   <div class="chart-card" style="margin-bottom:32px">
     <div class="chart-t">Global Warming Projections 1850–2100</div>
     <div class="chart-st">Temperature anomaly vs. pre-industrial baseline (1850–1900). Historical record + 4 IPCC SSP scenario projections. SSP5-8.5 = fossil-fueled development ("near business as usual").</div>
-    <div class="chart-wrapper" style="height:340px"><canvas id="chartProjections"></canvas></div>
+    <div class="chart-wrapper" style="height:340px"><canvas id="chartProjections" role="img" aria-label="Global warming projections 1850-2100 showing four SSP scenarios from 1.8 to 4.4 degrees"></canvas></div>
     <div class="chart-src">Source: IPCC AR6 WG1 Chapter 4 (2021). SSP = Shared Socioeconomic Pathway. Central estimates shown. Uncertainty ranges are substantial, particularly at high warming levels. The 1.5°C Paris target requires immediate, deep emissions cuts.</div>
   </div>
 
@@ -1226,7 +1238,7 @@ hr.div{border:none;border-top:1px solid var(--border);margin:60px 0 0}
         <div class="chart-card" style="margin:0">
           <div class="chart-t">Warming Trajectories by Scenario (°C above pre-industrial)</div>
           <div class="chart-st">Temperature projections to 2100 — UNEP Emissions Gap Report 2024</div>
-          <div class="chart-wrapper" style="height:280px"><canvas id="chartNDCGap"></canvas></div>
+          <div class="chart-wrapper" style="height:280px"><canvas id="chartNDCGap" role="img" aria-label="NDC emissions gap showing current policies at 3.1C versus net-zero pledges at 1.9C"></canvas></div>
           <div class="chart-src">Source: UNEP Emissions Gap Report 2024; IPCC AR6. All scenarios use central estimates. "Current policies" reflects 2024 policy landscape. "Full NDCs" assumes complete implementation of all submitted nationally determined contributions. Net-zero pledges scenario assumes all net-zero targets are met on schedule.</div>
         </div>
       </div>
@@ -1486,13 +1498,13 @@ hr.div{border:none;border-top:1px solid var(--border);margin:60px 0 0}
     <div class="chart-card">
       <div class="chart-t">Outdoor CO₂ vs. Typical Indoor Levels</div>
       <div class="chart-st">Occupied classrooms/offices run ~400–600 ppm above outdoor levels. As outdoor CO₂ rises, indoor levels follow — pushing building occupants into cognitively impaired territory for most of the workday.</div>
-      <div class="chart-wrapper" style="height:260px"><canvas id="chartIndoorCO2"></canvas></div>
+      <div class="chart-wrapper" style="height:260px"><canvas id="chartIndoorCO2" role="img" aria-label="Outdoor CO2 versus typical indoor levels projecting cognitive impairment thresholds"></canvas></div>
       <div class="chart-src">Source: Karnauskas et al. 2020 (Nature Sustainability); Allen et al. 2016 (Harvard / Lawrence Berkeley Lab). Indoor CO₂ modeled using mass-balance classroom ventilation assumptions with urban CO₂ dome enhancement.</div>
     </div>
     <div class="chart-card">
       <div class="chart-t">Cognitive Performance Decline vs. CO₂ Exposure</div>
       <div class="chart-st">Controlled exposure studies show measurable, dose-dependent cognitive decline. Complex tasks (strategic reasoning, crisis planning) are more severely affected than simple tasks at the same CO₂ level.</div>
-      <div class="chart-wrapper" style="height:260px"><canvas id="chartCognition"></canvas></div>
+      <div class="chart-wrapper" style="height:260px"><canvas id="chartCognition" role="img" aria-label="Cognitive performance decline versus CO2 exposure showing impairment above 1000 ppm"></canvas></div>
       <div class="chart-src">Source: Allen et al. 2016 (PMC4892924); Satish et al. 2012; Karnauskas et al. 2020 (Nature Sustainability). Laboratory studies using 3-hour controlled exposures with blinded participants.</div>
     </div>
   </div>
@@ -1972,7 +1984,7 @@ hr.div{border:none;border-top:1px solid var(--border);margin:60px 0 0}
     <div class="chart-card" style="margin:0">
       <div class="chart-t">Global Natural Disaster Economic Losses by Decade</div>
       <div class="chart-st">Inflation-adjusted average annual losses (USD billions) — Munich Re NatCatSERVICE</div>
-      <div class="chart-wrapper" style="height:300px"><canvas id="chartEconLoss"></canvas></div>
+      <div class="chart-wrapper" style="height:300px"><canvas id="chartEconLoss" role="img" aria-label="Global disaster economic losses by decade showing increase from 55 billion in 1980s to 270 billion in 2020s"></canvas></div>
       <div class="chart-src">Source: Munich Re NatCatSERVICE (2025). All figures inflation-adjusted to 2024 USD. 2020s figure uses 2020–2024 actual data. Weather disasters account for 90–97% of total losses in every decade. Insured portion has grown from ~25% to ~44% of total losses.</div>
     </div>
     <div style="display:flex;flex-direction:column;gap:14px">
@@ -2131,7 +2143,7 @@ hr.div{border:none;border-top:1px solid var(--border);margin:60px 0 0}
 <!-- ═══════════════════════════════════════════════ -->
 <!-- FOOTER / SOURCES                               -->
 <!-- ═══════════════════════════════════════════════ -->
-<footer id="sources">
+<footer id="sources" style="scroll-margin-top:70px">
   <div class="footer-inner">
     <div class="footer-title">Primary Data Sources &amp; References</div>
     <div class="source-grid">
@@ -2519,12 +2531,12 @@ new Chart(document.getElementById('chartTemp').getContext('2d'), {
       borderWidth:0,borderRadius:1,
     },{
       type:'line',label:'1.5°C Paris Target',
-      data:[{x:1880,y:1.5},{x:2024,y:1.5}],
+      data:[{x:1880,y:1.23},{x:2024,y:1.23}],
       borderColor:'rgba(234,179,8,0.7)',borderWidth:1.5,borderDash:[5,4],
       pointRadius:0,fill:false
     },{
       type:'line',label:'2.0°C Upper Target',
-      data:[{x:1880,y:2.0},{x:2024,y:2.0}],
+      data:[{x:1880,y:1.73},{x:2024,y:1.73}],
       borderColor:'rgba(239,68,68,0.5)',borderWidth:1.5,borderDash:[5,4],
       pointRadius:0,fill:false
     },{
@@ -2945,7 +2957,6 @@ const vuln = {
   '276':2,'250':2,'826':2,'528':2,'124':2,'392':2,'410':2,'756':2,
   '40':2,'56':2,'208':2,'246':2,'578':2,'752':2,'703':2,'705':2,
   '191':2,'348':2,'642':2,'804':2,'616':2,'372':2,'554':2,'352':2,
-  '724':2,'724':2
 };
 
 function getVulnColor(id){
@@ -3062,7 +3073,7 @@ function showEventPanel(e){
       <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
         <div style="font-size:11px;color:var(--muted);margin-bottom:8px">OTHER ACTIVE EVENTS IN THIS CATEGORY</div>
         ${impactEvents.filter(x=>x.type===e.type&&x.id!==e.id).slice(0,3).map(x=>
-          `<div onclick="showEventPanel(${JSON.stringify(x).replace(/"/g,"'").replace(/'/g,'"')})"
+          `<div onclick="showEventPanel(impactEvents.find(ev=>ev.id===${x.id}))"
             style="font-size:12px;color:var(--text2);padding:6px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:color 0.15s"
             onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text2)'">
             ▸ ${x.name} <span style="color:var(--muted)">(${x.year})</span>
@@ -3646,6 +3657,7 @@ window.addEventListener('resize',()=>{
 // ─── SCROLL SPY — highlight active nav link ───────────────────────────────
 (function(){
   const sections = [
+    {id:'synopsis',    el:null},
     {id:'atmosphere',  el:null},
     {id:'temperature', el:null},
     {id:'ocean',       el:null},
@@ -3690,6 +3702,7 @@ window.addEventListener('resize',()=>{
 
 // ─── ENTRANCE ANIMATIONS ──────────────────────────────────────────────────────
 (function(){
+  document.documentElement.classList.add('js-ready');
   const obs = new IntersectionObserver((entries) => {
     entries.forEach(e => {
       if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); }
